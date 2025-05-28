@@ -7,6 +7,7 @@ use App\Filament\Resources\EmployeeResource\RelationManagers;
 use App\Models\City;
 use App\Models\Employee;
 use App\Models\State;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
@@ -31,6 +32,7 @@ class EmployeeResource extends Resource
     protected static ?string $model = Employee::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Human Resources';
 
     public static ?string $recordTitleAttribute = 'first_name';
 
@@ -71,7 +73,8 @@ class EmployeeResource extends Resource
                         ->searchable()
                         ->required(),
                         Forms\Components\Select::make('country_id')
-                         ->Relationship('country', 'name')
+                         ->Relationship(
+                            'country', 'name'                            )
                          ->searchable()
                          ->preload()
                          ->live()
@@ -193,6 +196,8 @@ class EmployeeResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                ->successNotificationTitle('Employee deleted.'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

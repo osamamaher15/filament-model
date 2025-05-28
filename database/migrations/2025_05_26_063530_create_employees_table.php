@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
+            $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->foreignId('department_id')->constrained()->onDelete('cascade');
             $table->foreignId('country_id')->constrained()->onDelete('cascade');
             $table->foreignId('state_id')->constrained()->onDelete('cascade');
