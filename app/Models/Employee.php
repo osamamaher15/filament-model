@@ -14,6 +14,7 @@ class Employee extends Model
         'phone',
         'address',
         'zip_code',
+        'image',
         'date_of_birth',
         'date_hired',
         'country_id',
@@ -43,5 +44,9 @@ class Employee extends Model
         return $this->belongsTo(City::class);
     }
 
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
 
 }

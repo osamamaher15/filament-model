@@ -3,12 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Filament\Models\Contracts\HasTenants;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+class User extends Authenticatable  implements HasTenants
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -22,6 +28,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin',
     ];
 
     /**
@@ -44,6 +51,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'boolean',
         ];
     }
 
@@ -56,5 +64,25 @@ class User extends Authenticatable
             ->explode(' ')
             ->map(fn (string $name) => Str::of($name)->substr(0, 1))
             ->implode('');
+    }
+
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class);
+    }
+
+    public function getTenants(Panel $panel): Collection
+    {
+        return $this->teams;
+    }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->teams()->whereKey($tenant)->exists();
+    }
+
+    public function IsAdmin(): bool
+    {
+        return $this->email === 'admin@admin.com';
     }
 }
